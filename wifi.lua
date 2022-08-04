@@ -43,6 +43,12 @@ local watcher = hs.wifi.watcher.new(function(_, message)
 end)
 watcher:start()
 
+local function autorun()
+  local timer = hs.timer.doAfter(10 * 1000, handler)
+  timer:start()
+end
+autorun()
+
 ---@module wifi
 ---@field public onAtHome HookRegister
 ---@field public onElsewhere HookRegister
