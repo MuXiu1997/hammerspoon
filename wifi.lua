@@ -44,8 +44,7 @@ end)
 watcher:start()
 
 local function autorun()
-  local timer = hs.timer.doAfter(10 * 1000, handler)
-  timer:start()
+  hs.timer.doAfter(10, handler):start()
 end
 autorun()
 
