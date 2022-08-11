@@ -29,6 +29,15 @@ end
 function _G.trim(str)
   return str:gsub('^%s*(.-)%s*$', '%1')
 end
+
+---@param path string
+function _G.mkdir(path)
+  ---@language Shell Script
+  local script = ([[
+    mkdir -p '%s'
+  ]]).format(path)
+  hs.execute(script)
+end
 --endregion global functions
 
 _G.USER_HOME = os.getenv('HOME')
