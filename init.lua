@@ -12,7 +12,7 @@ end)
 
 wifi.onElsewhere(function() 
   vpn.openVPN()
-  nas.umountNAS()
+  nas.unmountNAS()
 end)
 
 hs.alert.show('Hammerspoon config loaded')
