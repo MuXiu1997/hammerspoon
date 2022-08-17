@@ -18,8 +18,8 @@ end
 ---@type fun(): void
 local handler = debounce(function()
   local currentNetwork = hs.wifi.currentNetwork()
-  print('Current network: ' .. currentNetwork)
   if currentNetwork == nil then return end
+  print('Current network: ' .. hs.inspect(currentNetwork))
   if currentNetwork == SSID_HOME then
     invokeHooks(atHomeHooks)
     return
