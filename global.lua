@@ -36,7 +36,7 @@ function _G.mkdir(path)
   local script = ([[
     mkdir -p '%s'
   ]]).format(path)
-  hs.execute(script)
+  os.execute(script)
 end
 --endregion global functions
 

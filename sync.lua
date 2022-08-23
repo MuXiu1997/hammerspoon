@@ -1,20 +1,28 @@
 local DROPBOX_HOME = USER_HOME .. '/Dropbox'
 local SYNC_DIR = DROPBOX_HOME .. '/Sync'
+local RSYNC_EXECUTABLE, _, _, _ = hs.execute("which rsync", true)
+RSYNC_EXECUTABLE = trim(RSYNC_EXECUTABLE)
 
 ---@param src string
 ---@param relDst string
 local function syncDir(src, relDst)
   local dst = SYNC_DIR .. '/' .. relDst
   mkdir(dst)
-  ---@language Shell Script
-  local script = ([[
-    rsync -av --delete '%s' '%s'
-  ]]):format(src, dst)
-  local output, _, _, rc = hs.execute(script)
-  if rc ~= 0 then
-    hs.alert.show('Sync failed: ' .. output)
-  end
-  print('Sync ' .. hs.inspect(src) .. ' to ' .. hs.inspect(dst))
+  local task = hs.task.new(
+    RSYNC_EXECUTABLE,
+    function(exitCode, _, stdErr)
+      if exitCode ~= 0 then
+        local errMsg = 'Sync failed: ' .. hs.inspect(stdErr)
+        hs.alert.show(errMsg)
+        print(errMsg)
+        return
+      end
+      print('Task: Synced ' .. hs.inspect(src) .. ' to ' .. hs.inspect(dst))
+    end,
+    function() return true end,
+    { '-av', '--delete', src, dst }
+  )
+  task:start()
 end
 
 ---@type table<string, string>
@@ -32,9 +40,7 @@ local function sync()
 end
 
 local function autorun()
-  hs  .timer.doAfter(10, function()
-    sync()
-    hs.timer.doEvery(60 * 60, sync):start()
-  end):start()
+  hs.timer.doAfter(30, function() sync() end):start()
+  hs.timer.doEvery(hs.timer.hours(1), sync):start()
 end
 autorun()
