@@ -8,14 +8,8 @@ end
 local function quitShadowsocks()
   ---@language AppleScript
   local script = [[
-    tell application "System Events" to tell process "ShadowsocksX-NG"
-      click menu bar item 1 of menu bar 1
-    end tell
-    tell application "System Events" to tell process "ShadowsocksX-NG"
-      tell menu bar item 1 of menu bar 1
-        click menu item "退出" of menu 1
-      end tell
-    end tell  
+    set shadowsocks to alias ((path to applications folder as text) & "ShadowsocksX-NG-R8.app") as text
+    tell my application shadowsocks to if it is running then quit
   ]]
   hs.osascript.applescript(script)
   print('Quit ShadowsocksX-NG')
