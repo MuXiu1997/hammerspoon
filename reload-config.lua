@@ -12,3 +12,11 @@ end
 
 local watcher = hs.pathwatcher.new(HAMMERSPOON_CONFIG_HOME, reloadConfig)
 watcher:start()
+
+---@module reloadConfig
+---@field public watcher table
+local module = {
+  watcher = watcher,
+}
+
+return module

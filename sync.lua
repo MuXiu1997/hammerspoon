@@ -39,8 +39,17 @@ local function sync()
   end
 end
 
+local timerEveryHour = hs.timer.doEvery(hs.timer.hours(1), sync)
+
 local function autorun()
   hs.timer.doAfter(30, function() sync() end):start()
-  hs.timer.doEvery(hs.timer.hours(1), sync):start()
+  timerEveryHour:start()
 end
 autorun()
+
+---@module sync
+local module = {
+  timerEveryHour = timerEveryHour
+}
+
+return module

@@ -51,9 +51,11 @@ autorun()
 ---@module wifi
 ---@field public onAtHome HookRegister
 ---@field public onElsewhere HookRegister
+---@field public watcher table
 local module = {
   onAtHome    = onAtHome,
   onElsewhere = onElsewhere,
+  watcher     = watcher,
 }
 
 return module
