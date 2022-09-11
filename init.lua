@@ -1,6 +1,7 @@
 require('global')
 require('reload-config')
 require('sync')
+require('keyboard')
 local wifi = require('wifi')
 local vpn = require('vpn')
 local nas = require('nas')
