@@ -25,6 +25,15 @@ local function syncDir(src, relDst)
   task:start()
 end
 
+local function syncRime()
+  ---@language Shell Script
+  local script = [[
+    /Library/Input\ Methods/Squirrel.app/Contents/MacOS/Squirrel --sync
+  ]]
+  hs.execute(script)
+  print('Task: Rime Synced')
+end
+
 ---@type table<string, string>
 local toBeSynced = {
   [USER_HOME .. '/Library/Preferences/']                                       = 'Preferences',
@@ -37,6 +46,7 @@ local function sync()
   for src, relDst in pairs(toBeSynced) do
     syncDir(src, relDst)
   end
+  syncRime()
 end
 
 local timerEveryHour = hs.timer.doEvery(hs.timer.hours(1), sync)
