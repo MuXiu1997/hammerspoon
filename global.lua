@@ -38,12 +38,21 @@ function _G.mkdir(path)
   ]]).format(path)
   os.execute(script)
 end
+
+---@param name string
+---@return string
+function _G.getEnv(name)
+  ---@language Shell Script
+  local script = [[echo -n \$]] .. name
+  local output, _ = hs.execute(script, true)
+  return output
+end
 --endregion global functions
 
-_G.USER_HOME = os.getenv('HOME')
-_G.XDG_CONFIG_HOME = os.getenv('XDG_CONFIG_HOME') or _G.USER_HOME .. '/.config'
+_G.USER_HOME = getEnv('HOME')
+_G.XDG_CONFIG_HOME = getEnv('XDG_CONFIG_HOME') or _G.USER_HOME .. '/.config'
 _G.HAMMERSPOON_CONFIG_HOME = XDG_CONFIG_HOME .. '/hammerspoon'
-_G.SSID_HOME = trim(readFile(XDG_CONFIG_HOME .. '/muxiu1997/SSID-HOME'))
-_G.NAS_HOST = trim(readFile(XDG_CONFIG_HOME .. '/muxiu1997/NAS-HOST'))
-_G.NAS_USERNAME = trim(readFile(XDG_CONFIG_HOME .. '/muxiu1997/NAS-USERNAME'))
-_G.NAS_PASSWORD = trim(readFile(XDG_CONFIG_HOME .. '/muxiu1997/NAS-PASSWORD'))
+_G.SSID_HOME = getEnv('MUXIU1997_SSID_HOME')
+_G.NAS_HOST = getEnv('MUXIU1997_NAS_HOST')
+_G.NAS_USERNAME = getEnv('MUXIU1997_NAS_USERNAME')
+_G.NAS_PASSWORD = getEnv('MUXIU1997_NAS_PASSWORD')
