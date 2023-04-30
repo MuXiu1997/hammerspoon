@@ -6,6 +6,9 @@
 local atHomeHooks = {}
 
 ---@type Hooks
+local atWorkHooks = {}
+
+---@type Hooks
 local elsewhereHooks = {}
 
 ---@param hooks Hooks
@@ -24,12 +27,21 @@ local handler = debounce(function()
     invokeHooks(atHomeHooks)
     return
   end
+  if currentNetwork == SSID_WORK then
+    invokeHooks(atWorkHooks)
+    return
+  end
   invokeHooks(elsewhereHooks)
 end, 1)
 
 ---@type HookRegister
 local onAtHome = function(hook)
   atHomeHooks[#atHomeHooks + 1] = hook
+end
+
+---@type HookRegister
+local onAtWork = function(hook)
+  atWorkHooks[#atWorkHooks + 1] = hook
 end
 
 ---@type HookRegister
@@ -50,10 +62,12 @@ autorun()
 
 ---@module wifi
 ---@field public onAtHome HookRegister
+---@field public onAtWork HookRegister
 ---@field public onElsewhere HookRegister
 ---@field public watcher table
 local module = {
   onAtHome    = onAtHome,
+  onAtWork    = onAtWork,
   onElsewhere = onElsewhere,
   watcher     = watcher,
 }

@@ -11,7 +11,12 @@ wifi.onAtHome(function()
   nas.mountNAS()
 end)
 
-wifi.onElsewhere(function() 
+wifi.onAtWork(function()
+  vpn.closeVPN()
+  nas.unmountNAS()
+end)
+
+wifi.onElsewhere(function()
   vpn.openVPN()
   nas.unmountNAS()
 end)
