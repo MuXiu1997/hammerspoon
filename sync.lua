@@ -26,7 +26,7 @@ local function syncDir(src, relDst)
 end
 
 local function syncRime()
-  ---@language Shell Script
+  ---@language "Shell Script"
   local script = [[
     /Library/Input\ Methods/Squirrel.app/Contents/MacOS/Squirrel --sync
   ]]

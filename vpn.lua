@@ -16,7 +16,7 @@ local function quitShadowsocks()
 end
 
 local function setDNS()
-  ---@language Shell Script
+  ---@language "Shell Script"
   local script = [[
     networksetup -setdnsservers Wi-Fi 8.8.8.8
   ]]
@@ -25,7 +25,7 @@ local function setDNS()
 end
 
 local function emptyDNS()
-  ---@language Shell Script
+  ---@language "Shell Script"
   local script = [[
     networksetup -setdnsservers Wi-Fi "Empty"
   ]]

@@ -32,7 +32,7 @@ end
 
 ---@param path string
 function _G.mkdir(path)
-  ---@language Shell Script
+  ---@language "Shell Script"
   local script = ([[
     mkdir -p '%s'
   ]]):format(path)
@@ -42,7 +42,7 @@ end
 ---@param name string
 ---@return string
 function _G.getEnv(name)
-  ---@language Shell Script
+  ---@language "Shell Script"
   local script = [[echo -n \$]] .. name
   local output, _ = hs.execute(script, true)
   return output
