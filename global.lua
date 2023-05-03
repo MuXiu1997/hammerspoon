@@ -35,7 +35,7 @@ function _G.mkdir(path)
   ---@language Shell Script
   local script = ([[
     mkdir -p '%s'
-  ]]).format(path)
+  ]]):format(path)
   os.execute(script)
 end
 
