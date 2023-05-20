@@ -18,8 +18,8 @@ local function invokeHooks (hooks)
   end
 end
 
----@type fun(): void
-local handler = debounce(function()
+---@type table
+local handler = hs.timer.delayed.new(1, function()
   local currentNetwork = hs.wifi.currentNetwork()
   if currentNetwork == nil then return end
   print('Current network: ' .. hs.inspect(currentNetwork))
@@ -32,7 +32,7 @@ local handler = debounce(function()
     return
   end
   invokeHooks(elsewhereHooks)
-end, 1)
+end)
 
 ---@type HookRegister
 local onAtHome = function(hook)
@@ -51,12 +51,12 @@ end
 
 local watcher = hs.wifi.watcher.new(function(_, message)
   if message ~= 'SSIDChange' then return end
-  handler()
+  handler:start()
 end)
 watcher:start()
 
 local function autorun()
-  hs.timer.doAfter(10, handler):start()
+  hs.timer.doAfter(10, function() handler:start() end):start()
 end
 autorun()
 
