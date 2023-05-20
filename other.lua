@@ -14,15 +14,28 @@ local jetbrainsBinDirWatcher = hs.pathwatcher.new(JETBRAINS_BIN_DIR, function()
   hs.execute(script2, true)
 end)
 
+local edgeWatcher = hs.pathwatcher.new('/Applications/Microsoft Edge.app/Icon\r', function(paths, flagTables)
+  if paths[1] ~= '/Applications/Microsoft Edge.app/Icon\r' then return end
+  if flagTables[1].itemRemoved ~= true then return end
+  ---@language "Shell Script"
+  local script = ([[
+    fileicon set '/Applications/Microsoft Edge.app' %s/Projects/icons/Edge.icns && killall Dock
+  ]]):format(USER_HOME)
+  hs.execute(script, true)
+end)
+
 local function autorun()
   jetbrainsBinDirWatcher:start()
+  edgeWatcher:start()
 end
 autorun()
 
 ---@module other
 ---@field public jetbrainsBinDirWatcher table
+---@field public edgeWatcher table
 local module = {
   jetbrainsBinDirWatcher = jetbrainsBinDirWatcher,
+  edgeWatcher = edgeWatcher,
 }
 
 return module
