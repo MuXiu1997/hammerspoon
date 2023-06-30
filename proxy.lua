@@ -33,25 +33,25 @@ local function emptyDNS()
   print('Empty DNS')
 end
 
-local function openVPN()
+local function openProxy()
   openShadowsocks()
   setDNS()
 end
 
-local function closeVPN()
+local function closeProxy()
   quitShadowsocks()
   emptyDNS()
 end
 
-hs.urlevent.bind('vpn.openVPN', openVPN)
-hs.urlevent.bind('vpn.closeVPN', closeVPN)
+hs.urlevent.bind('proxy.openProxy', openProxy)
+hs.urlevent.bind('proxy.closeProxy', closeProxy)
 
----@module vpn
----@field public openVPN fun():void
----@field public closeVPN fun():void
+---@module proxy
+---@field public openProxy fun():void
+---@field public closeProxy fun():void
 local module = {
-  openVPN  = openVPN,
-  closeVPN = closeVPN,
+  openProxy  = openProxy,
+  closeProxy = closeProxy,
 }
 
 return module
