@@ -4,21 +4,17 @@ require('sync')
 require('keyboard')
 require('other')
 local wifi = require('wifi')
-local proxy = require('proxy')
 local nas = require('nas')
 
 wifi.onAtHome(function()
-  proxy.closeProxy()
   nas.mountNAS()
 end)
 
 wifi.onAtWork(function()
-  proxy.closeProxy()
   nas.unmountNAS()
 end)
 
 wifi.onElsewhere(function()
-  proxy.openProxy()
   nas.unmountNAS()
 end)
 
