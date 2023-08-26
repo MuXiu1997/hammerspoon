@@ -3,7 +3,7 @@ local JETBRAINS_BIN_DIR = getEnv('JETBRAINS_BIN')
 local jetbrainsBinDirWatcher = hs.pathwatcher.new(JETBRAINS_BIN_DIR, function()
   ---@language "Shell Script"
   local script1 = ([[
-    python3 %s/update_mos_applications_path.py
+    python3 %s/update_mos_jetbrains_paths.py
   ]]):format(HAMMERSPOON_INTERNAL_SCRIPTS)
   hs.execute(script1, true)
 
