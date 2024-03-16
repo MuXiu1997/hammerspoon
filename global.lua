@@ -34,6 +34,7 @@ end
 --endregion global functions
 
 _G.USER_HOME = getEnv('HOME')
+_G.DEVICE_ID = getEnv('DEVICE_ID')
 _G.XDG_CONFIG_HOME = getEnv('XDG_CONFIG_HOME') or _G.USER_HOME .. '/.config'
 _G.HAMMERSPOON_CONFIG_HOME = XDG_CONFIG_HOME .. '/hammerspoon'
 _G.HAMMERSPOON_INTERNAL_SCRIPTS = HAMMERSPOON_CONFIG_HOME .. '/internal_scripts'

@@ -1,22 +1,28 @@
 require('global')
 require('reload-config')
-require('sync')
 require('keyboard')
 require('kill-legacy-screen-saver')
 require('other')
-local wifi = require('wifi')
-local nas = require('nas')
 
-wifi.onAtHome(function()
-  nas.mountNAS()
-end)
+if DEVICE_ID == 'MACBOOKPRO-MUXIU' then
+  require('sync')
+end
 
-wifi.onAtWork(function()
-  nas.unmountNAS()
-end)
+if DEVICE_ID == 'MACBOOKPRO-MUXIU' then
+  local wifi = require('wifi')
+  local nas = require('nas')
 
-wifi.onElsewhere(function()
-  nas.unmountNAS()
-end)
+  wifi.onAtHome(function()
+    nas.mountNAS()
+  end)
+
+  wifi.onAtWork(function()
+    nas.unmountNAS()
+  end)
+
+  wifi.onElsewhere(function()
+    nas.unmountNAS()
+  end)
+end
 
 hs.alert.show('Hammerspoon config loaded')
