@@ -21,7 +21,9 @@ local function unmountNAS()
   print('Unmount NAS')
 end
 
+-- use `open hammerspoon://nas.mountNAS`
 hs.urlevent.bind('nas.mountNAS', mountNAS)
+-- use `open hammerspoon://nas.unmountNAS`
 hs.urlevent.bind('nas.unmountNAS', unmountNAS)
 
 ---@module nas
