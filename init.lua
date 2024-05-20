@@ -1,3 +1,4 @@
+hs.logger.defaultLogLevel = 'info'
 require('global')
 require('reload-config')
 require('keyboard')

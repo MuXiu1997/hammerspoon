@@ -1,3 +1,5 @@
+local log = hs.logger.new('kill_legacy_screen_saver')
+
 ---@return number
 local function getScreensaverWaitTime()
   ---@language "Shell Script"
@@ -6,6 +8,9 @@ local function getScreensaverWaitTime()
   ]]
   local output, _, _, _ = hs.execute(script)
   local waitTime = tonumber(output)
+  if waitTime == nil then
+    return 0
+  end
   return waitTime
 end
 
@@ -17,6 +22,9 @@ local function getIdleTime()
   ]]
   local output, _, _, _ = hs.execute(script)
   local idleTime = tonumber(output)
+  if idleTime == nil then
+    return 0
+  end
   return idleTime
 end
 
@@ -48,23 +56,35 @@ local function killLegacyScreenSaverIfNotIdle()
   if #pids == 0 then
     return
   end
-  print('Kill legacyScreenSaver-x86_64, pids: ' .. hs.inspect(pids))
+  log.i('Kill legacyScreenSaver-x86_64, pids: ' .. hs.inspect(pids))
   killLegacyScreenSaver(pids)
 end
 
-local timerEveryScreensaverWaitTime = hs.timer.doEvery(
-  hs.timer.seconds(getScreensaverWaitTime()),
-  killLegacyScreenSaverIfNotIdle
-)
+local timerEveryScreensaverWaitTime = (function()
+  local screensaverWaitTime = getScreensaverWaitTime()
+  if screensaverWaitTime == 0 then
+    log.i('Screensaver is disabled, do not kill legacyScreenSaver-x86_64')
+    return nil
+  end
+  log.i('Screensaver wait time: ' .. screensaverWaitTime)
+  return hs.timer.doEvery(
+    hs.timer.seconds(screensaverWaitTime),
+    killLegacyScreenSaverIfNotIdle
+  )
+end)()
 
 local function autorun()
+  if timerEveryScreensaverWaitTime == nil then
+    return
+  end
   timerEveryScreensaverWaitTime:start()
 end
 autorun()
 
----@module kill-legacy-screen-saver
+---@module kill_legacy_screen_saver
 local module = {
-  timerEveryMinute = timerEveryScreensaverWaitTime,
+  timerEveryScreensaverWaitTime = timerEveryScreensaverWaitTime,
+  log = log,
 }
 
 return module
