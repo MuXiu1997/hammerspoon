@@ -42,11 +42,11 @@ local function autorun()
 end
 autorun()
 
--- use `open hammerspoon://other.updateMosJetbrainsPaths`
+-- use `open -g "hammerspoon://other.updateMosJetbrainsPaths"`
 hs.urlevent.bind('other.updateMosJetbrainsPaths', updateMosJetbrainsPaths)
--- use `open hammerspoon://other.updateJetbrainsIcons`
+-- use `open -g "hammerspoon://other.updateJetbrainsIcons"`
 hs.urlevent.bind('other.updateJetbrainsIcons', updateJetbrainsIcons)
--- use `open hammerspoon://other.updateEdgeIcon`
+-- use `open -g "hammerspoon://other.updateEdgeIcon"`
 hs.urlevent.bind('other.updateEdgeIcon', updateEdgeIcon)
 
 ---@module other
