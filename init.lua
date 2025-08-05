@@ -3,6 +3,7 @@ require('global')
 require('reload-config')
 require('keyboard')
 require('kill-legacy-screen-saver')
+require('wezterm')
 require('other')
 
 if DEVICE_ID == 'MACBOOKPRO-MUXIU' then
