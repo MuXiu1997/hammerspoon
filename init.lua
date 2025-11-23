@@ -5,6 +5,7 @@ require('keyboard')
 require('kill-legacy-screen-saver')
 require('wezterm')
 require('other')
+require('hs.ipc')
 
 if DEVICE_ID == 'MACBOOKPRO-MUXIU' then
   require('sync')
