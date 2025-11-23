@@ -39,7 +39,7 @@ local launchingAlert = {
 
   show = function(self)
     self:close()
-    self.currentAlertId = hs.alert.show("Launching WezTerm...", hs.alert.defaultStyle, hs.screen.mainScreen(), 1/0)
+    self.currentAlertId = hs.alert.show("Launching WezTerm...", hs.alert.defaultStyle, hs.screen.mainScreen(), 1 / 0)
   end,
 
   close = function(self)
@@ -57,12 +57,37 @@ local function maximizeWindow(win)
   win:setFrame(screenFrame)
 end
 
+local function getFocusableWindow(app)
+  if not app then return nil end
+
+  local function prepareWindow(win)
+    if not win or not win:isStandard() then return nil end
+    if win:isMinimized() then
+      win:unminimize()
+    end
+    return win
+  end
+
+  local win = prepareWindow(app:focusedWindow()) or prepareWindow(app:mainWindow())
+  if win then return win end
+
+  for _, candidate in ipairs(app:allWindows()) do
+    win = prepareWindow(candidate)
+    if win then return win end
+  end
+
+  return nil
+end
+
 local function showAndMaximize(app)
   if not app then return end
   app:unhide()
   app:setFrontmost(true)
-  local win = app:mainWindow()
+  local win = getFocusableWindow(app)
+  if not win then return end
   maximizeWindow(win)
+  win:raise()
+  win:focus()
 end
 
 local function toggleWezterm()
@@ -94,47 +119,52 @@ local function toggleWezterm()
   lastFocused:restore()
 end
 
+local OPTION_KEYCODES = {
+  [58] = true, -- left option
+  [61] = true, -- right option
+}
+
 local function createOptionDoublePressWatcher(callback)
-  local lastOptionPress = 0
-  local optionKeyTimer = nil
   local doublePressTimeout = 0.3
+  local lastOptionRelease = 0
+  local optionIsDown = false
+  local optionWasPure = true
 
   local eventtap = hs.eventtap.new({ hs.eventtap.event.types.flagsChanged }, function(event)
     local flags = event:getFlags()
-    local isOptionKeyEvent = false
+    local keyCode = event:getKeyCode()
+    local isOptionKey = OPTION_KEYCODES[keyCode] == true
 
-    if flags.alt and not (flags.cmd or flags.ctrl or flags.shift or flags.fn) then
-      isOptionKeyEvent = true
+    if optionIsDown and (flags.cmd or flags.ctrl or flags.shift or flags.fn) then
+      optionWasPure = false
     end
 
-    if not next(flags) then
-      if optionKeyTimer then
-        optionKeyTimer:stop()
-        optionKeyTimer = nil
+    if not isOptionKey then
+      if not flags.alt then
+        optionIsDown = false
+        optionWasPure = true
       end
       return false
     end
 
-    if isOptionKeyEvent then
-      local now = hs.timer.secondsSinceEpoch()
-
-      if optionKeyTimer then
-        optionKeyTimer:stop()
-        optionKeyTimer = nil
+    if flags.alt then
+      optionIsDown = true
+    else
+      if optionIsDown and optionWasPure then
+        local now = hs.timer.secondsSinceEpoch()
+        if (now - lastOptionRelease) <= doublePressTimeout then
+          callback()
+          lastOptionRelease = 0
+          optionIsDown = false
+          optionWasPure = true
+          return true
+        else
+          lastOptionRelease = now
+        end
       end
 
-      if (now - lastOptionPress) <= doublePressTimeout then
-        callback()
-        lastOptionPress = 0
-        return true
-      end
-
-      lastOptionPress = now
-
-      optionKeyTimer = hs.timer.doAfter(doublePressTimeout, function()
-        lastOptionPress = 0
-        optionKeyTimer = nil
-      end)
+      optionIsDown = false
+      optionWasPure = true
     end
 
     return false
@@ -146,7 +176,7 @@ end
 local optionDoublePressWatcher = createOptionDoublePressWatcher(toggleWezterm)
 optionDoublePressWatcher:start()
 
----@module wezterm
+---@module "wezterm"
 local module = {
   optionDoublePressWatcher = optionDoublePressWatcher,
 }
