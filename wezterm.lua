@@ -1,3 +1,9 @@
+---@module 'wezterm'
+local M = {}
+
+M.__name__ = 'wezterm'
+M.log = hs.logger.new(M.__name__)
+
 local WEZTERM_BUNDLE_ID = 'com.github.wez.wezterm'
 
 ---@return boolean
@@ -31,7 +37,7 @@ local lastFocused = {
     end
     self.app = nil
     self.win = nil
-  end
+  end,
 }
 
 local launchingAlert = {
@@ -39,7 +45,7 @@ local launchingAlert = {
 
   show = function(self)
     self:close()
-    self.currentAlertId = hs.alert.show("Launching WezTerm...", hs.alert.defaultStyle, hs.screen.mainScreen(), 1 / 0)
+    self.currentAlertId = hs.alert.show('Launching WezTerm...', hs.alert.defaultStyle, hs.screen.mainScreen(), 1 / 0)
   end,
 
   close = function(self)
@@ -47,9 +53,11 @@ local launchingAlert = {
       hs.alert.closeSpecific(self.currentAlertId)
       self.currentAlertId = nil
     end
-  end
+  end,
 }
 
+---@param win hs.window|nil
+---@return nil
 local function maximizeWindow(win)
   if not win then return end
   local screen = win:screen()
@@ -57,6 +65,8 @@ local function maximizeWindow(win)
   win:setFrame(screenFrame)
 end
 
+---@param app hs.application|nil
+---@return hs.window|nil
 local function getFocusableWindow(app)
   if not app then return nil end
 
@@ -79,6 +89,8 @@ local function getFocusableWindow(app)
   return nil
 end
 
+---@param app hs.application|nil
+---@return nil
 local function showAndMaximize(app)
   if not app then return end
   app:unhide()
@@ -90,6 +102,7 @@ local function showAndMaximize(app)
   win:focus()
 end
 
+---@return nil
 local function toggleWezterm()
   local app = hs.application.get(WEZTERM_BUNDLE_ID)
 
@@ -124,13 +137,15 @@ local OPTION_KEYCODES = {
   [61] = true, -- right option
 }
 
+---@param callback function
+---@return hs.eventtap
 local function createOptionDoublePressWatcher(callback)
   local doublePressTimeout = 0.3
   local lastOptionRelease = 0
   local optionIsDown = false
   local optionWasPure = true
 
-  local eventtap = hs.eventtap.new({ hs.eventtap.event.types.flagsChanged }, function(event)
+  local eventtap = hs.eventtap.new({ hs.eventtap.event.types.flagsChanged, }, function(event)
     local flags = event:getFlags()
     local keyCode = event:getKeyCode()
     local isOptionKey = OPTION_KEYCODES[keyCode] == true
@@ -173,12 +188,13 @@ local function createOptionDoublePressWatcher(callback)
   return eventtap
 end
 
-local optionDoublePressWatcher = createOptionDoublePressWatcher(toggleWezterm)
-optionDoublePressWatcher:start()
+M.optionDoublePressWatcher = createOptionDoublePressWatcher(toggleWezterm)
 
----@module "wezterm"
-local module = {
-  optionDoublePressWatcher = optionDoublePressWatcher,
-}
+function M.__init__()
+  M.log.i('Init [' .. M.__name__ .. '] module')
+  M.optionDoublePressWatcher:start()
+end
 
-return module
+M.__init__()
+
+return M
