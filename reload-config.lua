@@ -1,22 +1,31 @@
-local function reloadConfig(files)
-  local doReload = false
-  for _, file in pairs(files) do
-    if file:sub(-4) == '.lua' then
-      doReload = true
-    end
-  end
-  if doReload then
+---@module 'reload-config'
+local M = {}
+
+M.__name__ = 'reload-config'
+M.log = hs.logger.new(M.__name__)
+
+---@param files string[]
+---@return boolean
+function M.isNeedReloadConfig(files)
+  return hs.fnutils.some(files, function(file)
+    return file:sub(-4) == '.lua' or file:sub(-3) == '.py'
+  end)
+end
+
+---@param files string[]
+function M.reloadConfigIfNeed(files)
+  if M.isNeedReloadConfig(files) then
     hs.reload()
   end
 end
 
-local watcher = hs.pathwatcher.new(HAMMERSPOON_CONFIG_HOME, reloadConfig)
-watcher:start()
+M.watcher = hs.pathwatcher.new(_G.HAMMERSPOON_CONFIG_HOME, M.reloadConfigIfNeed)
 
----@module reloadConfig
----@field public watcher table
-local module = {
-  watcher = watcher,
-}
+function M.__init__()
+  M.log.i('Init [' .. M.__name__ .. '] module')
+  M.watcher:start()
+end
 
-return module
+M.__init__()
+
+return M
