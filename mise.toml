@@ -35,5 +35,5 @@ description = "Build and deploy configuration to local ~/.config/hammerspoon"
 run = [
   { task = "clean" },
   { task = "build" },
-  "rsync -av --delete --include='*.lua' --include='internal_scripts' --include='internal_scripts/*' --exclude='*' dist/ ~/.config/hammerspoon",
+  "rsync -av --prune-empty-dirs --include='*/' --include='*.lua' --exclude='*' dist/ ~/.config/hammerspoon",
 ]
