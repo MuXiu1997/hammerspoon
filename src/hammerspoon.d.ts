@@ -9,6 +9,8 @@ declare namespace hs {
 
   function reload(): void
 
+  function execute(this: void, command: string, withUserEnvironment?: boolean): LuaMultiReturn<[string, boolean, string, number]>
+
   namespace logger {
     /** @noSelf */
     function _new(this: void, name: string, logLevel?: string): Logger
@@ -91,6 +93,32 @@ declare namespace hs {
     function get(this: void, hint: string): Application | undefined
     function frontmostApplication(this: void): Application | undefined
     function launchOrFocusByBundleID(this: void, bundleID: string): boolean
+  }
+
+  namespace audiodevice {
+    interface AudioDevice {
+      name: (this: AudioDevice) => string
+      uid: (this: AudioDevice) => string
+      isInputDevice: (this: AudioDevice) => boolean
+      isOutputDevice: (this: AudioDevice) => boolean
+      transportType: (this: AudioDevice) => string
+      setDefaultOutputDevice: (this: AudioDevice) => boolean
+      setVolume: (this: AudioDevice, volume: number) => boolean
+    }
+
+    function allDevices(this: void): AudioDevice[]
+    function allInputDevices(this: void): AudioDevice[]
+    function allOutputDevices(this: void): AudioDevice[]
+    function findDeviceByName(this: void, name: string): AudioDevice | undefined
+    function findDeviceByUID(this: void, uid: string): AudioDevice | undefined
+    function findInputByName(this: void, name: string): AudioDevice | undefined
+    function findInputByUID(this: void, uid: string): AudioDevice | undefined
+    function findOutputByName(this: void, name: string): AudioDevice | undefined
+    function findOutputByUID(this: void, uid: string): AudioDevice | undefined
+    function defaultOutputDevice(this: void): AudioDevice | undefined
+    function defaultInputDevice(this: void): AudioDevice | undefined
+    function defaultEffectDevice(this: void): AudioDevice | undefined
+    function current(this: void, input?: boolean): AudioDevice | undefined
   }
 
   interface Window {
